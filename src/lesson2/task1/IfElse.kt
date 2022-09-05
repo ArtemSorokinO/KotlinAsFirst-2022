@@ -150,7 +150,7 @@ fun rookOrBishopThreatens(
         (ug1 == 0) and (ug2 == 0) -> return 0
         (ug1 == 1) and (ug2 == 0) -> return 1
         (ug1 == 0) and (ug2 == 1) -> return 2
-        else -> return 3
+        else -> return  3
     }
 }
 
