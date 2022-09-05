@@ -3,6 +3,9 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import java.util.function.IntBinaryOperator
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -68,7 +71,15 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String =
+    when {
+        (age % 100 / 10) == 1 -> "$age лет"
+        age % 10 in 5..9 -> "$age лет"
+        age % 10 == 0 -> "$age лет"
+        age % 10 == 1 -> "$age год"
+        age % 10 in 2..4 -> "$age года"
+        else -> "введено что-то несуразное"
+    }
 
 /**
  * Простая (2 балла)
@@ -81,7 +92,14 @@ fun timeForHalfWay(
     t1: Double, v1: Double,
     t2: Double, v2: Double,
     t3: Double, v3: Double
-): Double = TODO()
+): Double {
+    val s1 = v1 * t1
+    val s2 = v2 * t2
+    val allS = (s1 + s2 + t3 * v3) / 2
+    if (allS < s1) return s1 / v1
+    if (allS < (s1 + s2)) return s1 / v1 + (allS - s1) / v2
+    return s1 / v1 + s2 / v2 + (allS - s1 - s2) / v3
+}
 
 /**
  * Простая (2 балла)
@@ -96,7 +114,18 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = TODO()
+): Int {
+    var ug1 = 0
+    var ug2 = 0
+    if ((kingX == rookX1) or (rookY1 == kingY)) ++ug1
+    if ((kingX == rookX2) or (rookY2 == kingY)) ++ug2
+    return when {
+        (ug1 == 0) and (ug2 == 0) -> return 0
+        (ug1 == 1) and (ug2 == 0) -> return 1
+        (ug1 == 0) and (ug2 == 1) -> return 2
+        else -> return 3
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -112,7 +141,18 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    var ug1 = 0
+    var ug2 = 0
+    if ((kingX == rookX) or (rookY == kingY)) ++ug1
+    if (abs(kingX - bishopX) == abs(kingY - bishopY)) ++ug2
+    when {
+        (ug1 == 0) and (ug2 == 0) -> return 0
+        (ug1 == 1) and (ug2 == 0) -> return 1
+        (ug1 == 0) and (ug2 == 1) -> return 2
+        else -> return 3
+    }
+}
 
 /**
  * Простая (2 балла)
