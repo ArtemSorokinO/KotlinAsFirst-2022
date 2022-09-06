@@ -113,7 +113,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
     (hoursArrive -  hoursDepart) * 60 + (hoursDepart - hoursArrive)
 
 /**
- * Простая (2 балла)
+ * Простая  (2 балла)
  *
  * Человек положил в банк сумму в s рублей под p% годовых (проценты начисляются в конце года).
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
