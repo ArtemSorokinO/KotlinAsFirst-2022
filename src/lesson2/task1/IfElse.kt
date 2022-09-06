@@ -95,8 +95,8 @@ fun timeForHalfWay(
 ): Double {
     val s1 = v1 * t1
     val s2 = v2 * t2
-    val allS = (s1 + s2 + t3 * v3) / 2
-    if (allS < s1) return s1 / v1
+    val allS = (s1 + s2 + t3 * v3) / 2.0
+    if (allS < s1) return allS / v1
     if (allS < (s1 + s2)) return s1 / v1 + (allS - s1) / v2
     return s1 / v1 + s2 / v2 + (allS - s1 - s2) / v3
 }
@@ -150,7 +150,7 @@ fun rookOrBishopThreatens(
         (ug1 == 0) and (ug2 == 0) -> return 0
         (ug1 == 1) and (ug2 == 0) -> return 1
         (ug1 == 0) and (ug2 == 1) -> return 2
-        else -> return  3
+        else -> return 3
     }
 }
 
@@ -162,7 +162,15 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    when {
+        (a + b < c) or (a + c < b) or (b + c < a) -> return -1
+        ((sqr(a) + sqr(b)) > sqr(c)) and ((sqr(c) + sqr(b)) > sqr(a)) and ((sqr(a) + sqr(c)) > sqr(b)) -> return 0
+        ((sqr(a) + sqr(b)) == sqr(c)) or ((sqr(c) + sqr(b)) == sqr(a)) or ((sqr(a) + sqr(c)) == sqr(b)) -> return 1
+        ((sqr(a) + sqr(b)) < sqr(c)) or ((sqr(c) + sqr(b)) < sqr(a)) or ((sqr(a) + sqr(c)) < sqr(b)) -> return 2
+    }
+    return -1
+}
 
 /**
  * Средняя (3 балла)
@@ -172,4 +180,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    when {
+        (a > d) or (c > b) -> return -1
+        (c < a) and (b < d) -> return b - a
+        (a < c) and (d < b) -> return d - c
+        (a < c) -> return b - c
+        (c < a) -> return d - a
+    }
+    return -1
+}
