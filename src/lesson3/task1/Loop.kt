@@ -2,6 +2,9 @@
 
 package lesson3.task1
 
+import javax.management.Query.and
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -93,9 +96,9 @@ fun fib(n: Int): Int {
     var i1 = 0
     var i2 = 1
     var i3 = 0
-    for (i in 1..n){
+    for (i in 1..n) {
         i3 = i2
-        i2 = i1 + i2
+        i2 += i1
         i1 = i3
     }
     return i3
@@ -106,14 +109,25 @@ fun fib(n: Int): Int {
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    for (i in 2..(n / 2)) {
+        if (n % i == 0) return i
+    }
+    return n
+}
 
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    var mx = 0
+    for (i in 1..(n / 2)) {
+        if (n % i == 0) mx = i
+    }
+    return mx
+}
 
 /**
  * Простая (2 балла)
@@ -131,7 +145,19 @@ fun maxDivisor(n: Int): Int = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var steps = 0
+    var xNew = x
+    while (xNew != 1) {
+        if (xNew % 2 == 0) {
+            xNew /= 2
+        } else {
+            xNew = xNew * 3 + 1
+        }
+        steps += 1
+    }
+    return steps
+}
 
 /**
  * Средняя (3 балла)
@@ -139,7 +165,13 @@ fun collatzSteps(x: Int): Int = TODO()
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    var t = 1
+    for (i in 1..(min(m, n))) if ((m % i == 0) and (n % i == 0)) {
+        t = i
+    }
+    return m * n / t
+}
 
 /**
  * Средняя (3 балла)
@@ -148,8 +180,12 @@ fun lcm(m: Int, n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
-
+fun isCoPrime(m: Int, n: Int): Boolean {
+    for (i in 2..min(m, n)) {
+        if ((m % i == 0) and (n % i == 0)) return false
+    }
+    return true
+}
 /**
  * Средняя (3 балла)
  *
@@ -157,7 +193,15 @@ fun isCoPrime(m: Int, n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var revN = 0
+    var newN = n
+    while (newN > 0) {
+        revN = revN * 10 + newN % 10
+        newN /= 10
+    }
+    return revN
+}
 
 /**
  * Средняя (3 балла)
@@ -168,7 +212,15 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    var revN = 0
+    var newN = n
+    while (newN > 0) {
+        revN = revN * 10 + newN % 10
+        newN /= 10
+    }
+    return revN == n
+}
 
 /**
  * Средняя (3 балла)
@@ -178,7 +230,15 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var newN = n
+    var k = n % 10
+    while (newN > 0) {
+        if (newN % 10 != k) return true
+        newN /= 10
+    }
+    return false
+}
 
 /**
  * Средняя (4 балла)
