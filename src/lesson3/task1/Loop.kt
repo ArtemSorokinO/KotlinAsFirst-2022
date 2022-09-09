@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import javax.management.Query.and
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -77,7 +78,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var i = 0
-    var newN = n
+    var newN = abs(n)
     if (newN == 0) return 1
     while (newN > 0) {
         i += 1
@@ -166,11 +167,13 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var t = 1
-    for (i in 1..(min(m, n))) if ((m % i == 0) and (n % i == 0)) {
-        t = i
+    var mNew = m
+    var nNew = n
+    while (nNew != mNew) {
+        if (nNew > mNew) nNew -= mNew
+        else mNew -= nNew
     }
-    return m * n / t
+    return m * n / nNew
 }
 
 /**
@@ -181,10 +184,13 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    for (i in 2..min(m, n)) {
-        if ((m % i == 0) and (n % i == 0)) return false
+    var mNew = m
+    var nNew = n
+    while (nNew != mNew) {
+        if (nNew > mNew) nNew -= mNew
+        else mNew -= nNew
     }
-    return true
+    return mNew == 1
 }
 /**
  * Средняя (3 балла)
