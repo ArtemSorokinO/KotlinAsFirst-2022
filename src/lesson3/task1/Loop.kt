@@ -2,11 +2,9 @@
 
 package lesson3.task1
 
+import lesson1.task1.sqr
 import javax.management.Query.and
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -192,6 +190,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
     }
     return mNew == 1
 }
+
 /**
  * Средняя (3 балла)
  *
@@ -255,7 +254,30 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun fkt(x: Int): Double {
+    var k = 1.0
+    for (i in 1..x) k *= i
+    return k
+}
+
+fun sinStep(x: Double, i: Int): Double = x.pow(2 * i - 1) / fkt(2 * i - 1)
+
+fun sin(x: Double, eps: Double): Double {
+    var xNew = x
+    while (xNew >= 2 * PI) xNew -= 2 * PI
+    while (xNew <= -2 * PI) xNew += 2 * PI
+    var st = 20.0
+    var i = 1
+    var pm = 1
+    var sin = 0.0
+    while (st >= abs(eps)) {
+        st = sinStep(xNew, i)
+        sin += pm * st
+        pm *= -1
+        i += 1
+    }
+    return sin
+}
 
 /**
  * Средняя (4 балла)
@@ -266,7 +288,30 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun fktc(x: Int): Double {
+    var k = 1.0
+    for (i in 1..x) k *= i
+    return k
+}
+
+fun cosStep(x: Double, i: Int): Double = x.pow(2 * i) / fktc(2 * i)
+
+fun cos(x: Double, eps: Double): Double {
+    var xNew = x
+    while (xNew >= 2 * PI) xNew -= 2 * PI
+    while (xNew <= -2 * PI) xNew += 2 * PI
+    var st = 20.0
+    var i = 0
+    var pm = 1
+    var cos = 0.0
+    while (st >= abs(eps)) {
+        st = cosStep(xNew, i)
+        cos += pm * st
+        pm *= -1
+        i += 1
+    }
+    return cos
+}
 
 /**
  * Сложная (4 балла)
@@ -277,7 +322,29 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun len(x: Int): Int {
+    var xNew = x
+    var i = 0
+    while (xNew > 0) {
+        i++
+        xNew /= 10
+    }
+    return i
+}
+
+fun squareSequenceDigit(n: Int): Int {
+    var i = 0
+    var nNew = n
+    var k = 0
+    while (nNew > len(sqr(i + 1))) {
+        i++
+        k = len(sqr(i))
+        nNew -= k
+    }
+    return (sqr(i + 1) / ((10.0).pow(len(sqr(i + 1)) - nNew)).toInt() % 10)
+
+}
+
 
 /**
  * Сложная (5 баллов)
@@ -288,4 +355,16 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var i = 0
+    var nNew = n
+    var k = 0
+    while (nNew > len(fib(i + 1))) {
+        i++
+        k = len(fib(i))
+        nNew -= k
+    }
+    val fb = fib(i + 1)
+    return (fb / ((10.0).pow(len(fb) - nNew)).toInt() % 10)
+
+}
