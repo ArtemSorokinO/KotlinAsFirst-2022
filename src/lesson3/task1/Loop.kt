@@ -164,15 +164,17 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
+fun nod(m: Int, n: Int): Int {
     var mNew = m
     var nNew = n
     while (nNew != mNew) {
         if (nNew > mNew) nNew -= mNew
         else mNew -= nNew
     }
-    return m * n / nNew
+    return nNew
 }
+
+fun lcm(m: Int, n: Int): Int = m * n / nod(m, n)
 
 /**
  * Средняя (3 балла)
@@ -181,15 +183,7 @@ fun lcm(m: Int, n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var mNew = m
-    var nNew = n
-    while (nNew != mNew) {
-        if (nNew > mNew) nNew -= mNew
-        else mNew -= nNew
-    }
-    return mNew == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = nod(m, n) == 1
 
 /**
  * Средняя (3 балла)
@@ -217,15 +211,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var revN = 0
-    var newN = n
-    while (newN > 0) {
-        revN = revN * 10 + newN % 10
-        newN /= 10
-    }
-    return revN == n
-}
+fun isPalindrome(n: Int): Boolean = revert(n) == n
 
 /**
  * Средняя (3 балла)
@@ -254,18 +240,10 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun fkt(x: Int): Double {
-    var k = 1.0
-    for (i in 1..x) k *= i
-    return k
-}
-
-fun sinStep(x: Double, i: Int): Double = x.pow(2 * i - 1) / fkt(2 * i - 1)
+fun sinStep(x: Double, i: Int): Double = x.pow(2 * i - 1) / factorial(2 * i - 1)
 
 fun sin(x: Double, eps: Double): Double {
-    var xNew = x
-    while (xNew >= 2 * PI) xNew -= 2 * PI
-    while (xNew <= -2 * PI) xNew += 2 * PI
+    var xNew = x % (2 * PI)
     var st = 20.0
     var i = 1
     var pm = 1
@@ -288,18 +266,11 @@ fun sin(x: Double, eps: Double): Double {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun fktc(x: Int): Double {
-    var k = 1.0
-    for (i in 1..x) k *= i
-    return k
-}
 
-fun cosStep(x: Double, i: Int): Double = x.pow(2 * i) / fktc(2 * i)
+fun cosStep(x: Double, i: Int): Double = x.pow(2 * i) / factorial(2 * i)
 
 fun cos(x: Double, eps: Double): Double {
-    var xNew = x
-    while (xNew >= 2 * PI) xNew -= 2 * PI
-    while (xNew <= -2 * PI) xNew += 2 * PI
+    var xNew = x % (2 * PI)
     var st = 20.0
     var i = 0
     var pm = 1
@@ -322,26 +293,17 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun len(x: Int): Int {
-    var xNew = x
-    var i = 0
-    while (xNew > 0) {
-        i++
-        xNew /= 10
-    }
-    return i
-}
 
 fun squareSequenceDigit(n: Int): Int {
     var i = 0
     var nNew = n
     var k = 0
-    while (nNew > len(sqr(i + 1))) {
+    while (nNew > digitNumber(sqr(i + 1))) {
         i++
-        k = len(sqr(i))
+        k = digitNumber(sqr(i))
         nNew -= k
     }
-    return (sqr(i + 1) / ((10.0).pow(len(sqr(i + 1)) - nNew)).toInt() % 10)
+    return (sqr(i + 1) / ((10.0).pow(digitNumber(sqr(i + 1)) - nNew)).toInt() % 10)
 
 }
 
@@ -359,12 +321,12 @@ fun fibSequenceDigit(n: Int): Int {
     var i = 0
     var nNew = n
     var k = 0
-    while (nNew > len(fib(i + 1))) {
+    while (nNew > digitNumber(fib(i + 1))) {
         i++
-        k = len(fib(i))
+        k = digitNumber(fib(i))
         nNew -= k
     }
     val fb = fib(i + 1)
-    return (fb / ((10.0).pow(len(fb) - nNew)).toInt() % 10)
+    return (fb / ((10.0).pow(digitNumber(fb) - nNew)).toInt() % 10)
 
 }

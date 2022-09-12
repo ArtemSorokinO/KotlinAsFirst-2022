@@ -164,15 +164,14 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int {
-    when {
-        (a + b < c) || (a + c < b) || (b + c < a) -> return -1
-        ((sqr(a) + sqr(b)) > sqr(c)) && ((sqr(c) + sqr(b)) > sqr(a)) && ((sqr(a) + sqr(c)) > sqr(b)) -> return 0
-        ((sqr(a) + sqr(b)) == sqr(c)) || ((sqr(c) + sqr(b)) == sqr(a)) || ((sqr(a) + sqr(c)) == sqr(b)) -> return 1
-        ((sqr(a) + sqr(b)) < sqr(c)) || ((sqr(c) + sqr(b)) < sqr(a)) || ((sqr(a) + sqr(c)) < sqr(b)) -> return 2
-    }
-    return -1
+fun triangleKind(a: Double, b: Double, c: Double): Int = when {
+    (a + b < c) || (a + c < b) || (b + c < a) -> -1
+    ((sqr(a) + sqr(b)) > sqr(c)) && ((sqr(c) + sqr(b)) > sqr(a)) && ((sqr(a) + sqr(c)) > sqr(b)) -> 0
+    ((sqr(a) + sqr(b)) == sqr(c)) || ((sqr(c) + sqr(b)) == sqr(a)) || ((sqr(a) + sqr(c)) == sqr(b)) -> 1
+    ((sqr(a) + sqr(b)) < sqr(c)) || ((sqr(c) + sqr(b)) < sqr(a)) || ((sqr(a) + sqr(c)) < sqr(b)) -> 2
+    else -> -1
 }
+
 
 /**
  * Средняя (3 балла)
@@ -183,9 +182,9 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int) = when {
-    (a > d) or (c > b) -> -1
-    (c < a) and (b < d) -> b - a
-    (a < c) and (d < b) -> d - c
+    (a > d) || (c > b) -> -1
+    (c < a) && (b < d) -> b - a
+    (a < c) && (d < b) -> d - c
     (a < c) -> b - c
     (c < a) -> d - a
     else -> -1

@@ -30,7 +30,7 @@ fun isNumberHappy(number: Int): Boolean = (number / 1000 + number % 1000 / 100) 
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = (x1 == x2) or (y1 == y2) or (abs(x1 - x2) == abs(y1 - y2))
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = (x1 == x2) || (y1 == y2) || (abs(x1 - x2) == abs(y1 - y2))
 
 
 /**
@@ -39,22 +39,19 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = (x1 == x2) or 
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
+fun daysInMonth(month: Int, year: Int): Int =
     when (month) {
-        1, 3, 5, 7, 8, 10, 12 -> return 31
+        1, 3, 5, 7, 8, 10, 12 -> 31
         2 -> when {
-            year % 400 == 0 -> return 29
-            (year % 4 == 0) and (year % 100 != 0) -> return 29
-            else -> {
-                return 28
-            }
+            year % 400 == 0 -> 29
+            (year % 4 == 0) && (year % 100 != 0) -> 29
+            else -> 28
         }
 
-        4, 6, 9, 11 -> return 30
+        4, 6, 9, 11 -> 30
 
+        else -> -1
     }
-    return 0
-}
 
 /**
  * Простая (2 балла)
@@ -79,8 +76,8 @@ fun circleInside(
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     when {
-        ((r >= a) and (s >= b)) or ((r >= a) and (s >= c)) or ((r >= b) and (s >= c)) -> return true
-        ((s >= a) and (r >= b)) or ((s >= a) and (r >= c)) or ((s >= b) and (r >= c)) -> return true
+        ((r >= a) && (s >= b)) || ((r >= a) && (s >= c)) || ((r >= b) && (s >= c)) -> return true
+        ((s >= a) && (r >= b)) || ((s >= a) && (r >= c)) || ((s >= b) && (r >= c)) -> return true
     }
     return false
 }
