@@ -243,7 +243,12 @@ fun hasDifferentDigits(n: Int): Boolean {
 fun sinStep(x: Double, i: Int): Double = x.pow(2 * i - 1) / factorial(2 * i - 1)
 
 fun sin(x: Double, eps: Double): Double {
-    var xNew = x % (2 * PI)
+    var xNew = x
+    if (x >= 0) {
+        xNew %= (2 * PI)
+    } else {
+        xNew = -(abs(xNew) % (2 * PI))
+    }
     var st = 20.0
     var i = 1
     var pm = 1
@@ -270,7 +275,12 @@ fun sin(x: Double, eps: Double): Double {
 fun cosStep(x: Double, i: Int): Double = x.pow(2 * i) / factorial(2 * i)
 
 fun cos(x: Double, eps: Double): Double {
-    var xNew = x % (2 * PI)
+    var xNew = x
+    if (x >= 0) {
+        xNew %= (2 * PI)
+    } else {
+        xNew = -(abs(xNew) % (2 * PI))
+    }
     var st = 20.0
     var i = 0
     var pm = 1
