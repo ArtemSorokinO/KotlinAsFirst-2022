@@ -199,6 +199,8 @@ class Tests {
         assertEquals(-1.0, sin(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(100 * PI, 1e-5), 1e-5)
         assertEquals(0.0, sin(-6 * PI, 1e-5), 1e-5)
+        assertEquals(1.0, sin(-3.5 * PI, 1e-5), 1e-5)
+        assertEquals(0.017452406459518247, sin(-18.832102629018816, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.sin(1.0), sin(1.0, 1.0))
         assertNotEquals(kotlin.math.sin(-0.5), sin(-0.5, 1.0))
     }

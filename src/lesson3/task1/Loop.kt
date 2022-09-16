@@ -240,24 +240,18 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sinStep(x: Double, i: Int): Double = x.pow(2 * i - 1) / factorial(2 * i - 1)
 
 fun sin(x: Double, eps: Double): Double {
-    var xNew = x
-    if (x >= 0) {
-        xNew %= (2 * PI)
-    } else {
-        xNew = -(abs(xNew) % (2 * PI))
-    }
+    val xNew = x % (2 * PI)
     var st = 20.0
     var i = 1
     var pm = 1
     var sin = 0.0
-    while (st >= abs(eps)) {
-        st = sinStep(xNew, i)
+    while (abs(st) >= eps) {
+        st = xNew.pow(i) / factorial(i)
         sin += pm * st
         pm *= -1
-        i += 1
+        i += 2
     }
     return sin
 }
@@ -275,12 +269,7 @@ fun sin(x: Double, eps: Double): Double {
 fun cosStep(x: Double, i: Int): Double = x.pow(2 * i) / factorial(2 * i)
 
 fun cos(x: Double, eps: Double): Double {
-    var xNew = x
-    if (x >= 0) {
-        xNew %= (2 * PI)
-    } else {
-        xNew = -(abs(xNew) % (2 * PI))
-    }
+    val xNew = x % (2 * PI)
     var st = 20.0
     var i = 0
     var pm = 1
