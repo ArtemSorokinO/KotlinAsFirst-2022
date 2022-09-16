@@ -276,7 +276,7 @@ fun convertToString(n: Int, base: Int): String {
         if (i < 10) s += "$i"
         else s += IntToB(i)
     }
-    return s
+    return if (s == "") "0" else s
 }
 
 /**
