@@ -255,7 +255,7 @@ fun convert(n: Int, base: Int): List<Int> {
         list.add(n % base)
         n /= base
     }
-    return list.reversed()
+    return if (list.isEmpty()) listOf(0) else list.reversed()
 }
 
 /**
