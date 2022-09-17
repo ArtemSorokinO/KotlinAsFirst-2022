@@ -193,7 +193,11 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
             mapC += key to value
         } else if (value == "") {
             mapC += key to (mapC[key] + ", $value")
-        } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, "")).not()) {
+        } else if ((key in mapB) && (key in mapC) && ((", $value" in mapC.getOrDefault(
+                key,
+                ""
+            )).not() || ("$value, " in mapC.getOrDefault(key, "")).not())
+        ) {
             mapC += key to (mapC[key] + ", $value")
         }
     }
@@ -202,7 +206,11 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
             mapC += key to value
         } else if (value == "") {
             mapC += key to (mapC[key] + ", $value")
-        } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, "")).not()) {
+        } else if ((key in mapA) && (key in mapC) && ((", $value" in mapC.getOrDefault(
+                key,
+                ""
+            )).not() || ("$value, " in mapC.getOrDefault(key, "")).not())
+        ) {
             mapC += key to (mapC[key] + ", $value")
         }
     }
@@ -283,8 +291,10 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     if (word == "") return true
     if (chars.isEmpty()) return false
+    var charsN = mutableListOf<String>()
+    for (i in chars) charsN.add(i.lowercase())
     val word = word.lowercase()
-    for (i in word) if ((i in chars).not()) return false
+    for (i in word) if ((i.toString() in charsN).not()) return false
     return true
 }
 
