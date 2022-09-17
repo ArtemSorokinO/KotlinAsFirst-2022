@@ -191,6 +191,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     for ((key, value) in mapA) {
         if ((key in mapC).not()) {
             mapC += key to value
+        } else if (value == "") {
+            mapC += key to (mapC[key] + ", $value")
         } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, "")).not()) {
             mapC += key to (mapC[key] + ", $value")
         }
@@ -198,6 +200,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     for ((key, value) in mapB) {
         if ((key in mapC).not()) {
             mapC += key to value
+        } else if (value == "") {
+            mapC += key to (mapC[key] + ", $value")
         } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, "")).not()) {
             mapC += key to (mapC[key] + ", $value")
         }
@@ -256,10 +260,10 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
         if (kind == tipeCost.first) flag = false
     }
     if (flag) return null
-    var min = Double.MAX_VALUE
+    var min = 9.8e+999999
     var nam = ""
     for ((name, tipeCost) in stuff) {
-        if (kind == tipeCost.first && tipeCost.second < min) {
+        if (kind == tipeCost.first && tipeCost.second <= min) {
             min = tipeCost.second
             nam = name
         }
@@ -277,8 +281,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    if (word == "") return true
     if (chars.isEmpty()) return false
-    val word: String = word.lowercase()
+    val word = word.lowercase()
     for (i in word) if ((i in chars).not()) return false
     return true
 }
