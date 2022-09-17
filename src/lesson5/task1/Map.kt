@@ -187,34 +187,28 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val mapC = mutableMapOf<String, String>()
+    val mapC = mutableMapOf<String, List<String>>()
     for ((key, value) in mapA) {
         if ((key in mapC).not()) {
-            mapC += key to value
+            mapC += key to listOf(value)
         } else if (value == "") {
-            mapC += key to (mapC[key] + ", $value")
-        } else if ((key in mapB) && (key in mapC) && ((", $value" in mapC.getOrDefault(
-                key,
-                ""
-            )).not() || ("$value, " in mapC.getOrDefault(key, "")).not())
-        ) {
-            mapC += key to (mapC[key] + ", $value")
+            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
+        } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, listOf())).not()) {
+            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
         }
     }
     for ((key, value) in mapB) {
         if ((key in mapC).not()) {
-            mapC += key to value
+            mapC += key to listOf(value)
         } else if (value == "") {
-            mapC += key to (mapC[key] + ", $value")
-        } else if ((key in mapA) && (key in mapC) && ((", $value" in mapC.getOrDefault(
-                key,
-                ""
-            )).not() || ("$value, " in mapC.getOrDefault(key, "")).not())
-        ) {
-            mapC += key to (mapC[key] + ", $value")
+            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
+        } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, listOf())).not()) {
+            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
         }
     }
-    return mapC
+    val mapD = mutableMapOf<String, String>()
+    for ((key, value) in mapC) mapD += key to value.toString().substring(1, value.toString().length-1)
+    return mapD
 }
 
 
