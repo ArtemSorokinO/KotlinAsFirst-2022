@@ -184,7 +184,6 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         if (key !in mapC) {
             mapC += key to mutableListOf(value)
         } else if (value == "") {
-            mapC.getOrDefault(key, mutableListOf()).add(value)
         } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
             mapC.getOrDefault(key, mutableListOf()).add(value)
         }
@@ -193,7 +192,6 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         if (key !in mapC) {
             mapC += key to mutableListOf(value)
         } else if (value == "") {
-            mapC.getOrDefault(key, mutableListOf()).add(value)
         } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
             mapC.getOrDefault(key, mutableListOf()).add(value)
         }
@@ -277,7 +275,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     if (word == "") return true
     if (chars.isEmpty()) return false
-    return (chars.map { it.lowercase() }.sorted()) == (word.lowercase().toSet().map { it.toString() }.toList().sorted())
+    return (chars.map { it.lowercase() }.toSet().toList().sorted()) == (word.lowercase().toSet().map { it.toString() }
+        .toList().sorted())
 }
 
 /**
