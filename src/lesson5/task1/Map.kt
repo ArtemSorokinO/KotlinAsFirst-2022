@@ -3,6 +3,7 @@
 package lesson5.task1
 
 import ru.spbstu.wheels.rangeTo
+import java.io.File.separator
 import java.util.DoubleSummaryStatistics
 import java.util.StringJoiner
 
@@ -101,7 +102,7 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    var re = mapOf<Int, List<String>>()
+    val re = mutableMapOf<Int, List<String>>()
     for ((name, grade) in grades) {
         re += grade to when (grade) {
             in re -> re.getOrDefault(grade, listOf()) + name
@@ -123,7 +124,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((key, value) in a) {
-        if ((b[key] == value).not()) return false
+        if (b[key] != value) return false
     }
     return true
 }
@@ -156,18 +157,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val c = mutableListOf<String>()
-    for (i in when {
-        a.size > b.size -> a
-        else -> b
-    }) {
-        if ((i in a) && (i in b) && (i in c).not()) {
-            c.add(i)
-        }
-    }
-    return c
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b.toSet()).toList()
 
 /**
  * Средняя (3 балла)
@@ -187,27 +177,27 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val mapC = mutableMapOf<String, List<String>>()
+    val mapC = mutableMapOf<String, MutableList<String>>()
     for ((key, value) in mapA) {
-        if ((key in mapC).not()) {
-            mapC += key to listOf(value)
+        if (key !in mapC) {
+            mapC += key to mutableListOf(value)
         } else if (value == "") {
-            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
-        } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, listOf())).not()) {
-            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
+            mapC.getOrDefault(key, mutableListOf()).add(value)
+        } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
+            mapC.getOrDefault(key, mutableListOf()).add(value)
         }
     }
     for ((key, value) in mapB) {
-        if ((key in mapC).not()) {
-            mapC += key to listOf(value)
+        if (key !in mapC) {
+            mapC += key to mutableListOf(value)
         } else if (value == "") {
-            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
-        } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, listOf())).not()) {
-            mapC += key to (mapC.getOrDefault(key, listOf()) + listOf(value))
+            mapC.getOrDefault(key, mutableListOf()).add(value)
+        } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
+            mapC.getOrDefault(key, mutableListOf()).add(value)
         }
     }
     val mapD = mutableMapOf<String, String>()
-    for ((key, value) in mapC) mapD += key to value.toString().substring(1, value.toString().length-1)
+    for ((key, value) in mapC) mapD += key to value.joinToString()
     return mapD
 }
 
@@ -262,7 +252,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
         if (kind == tipeCost.first) flag = false
     }
     if (flag) return null
-    var min = 9.8e+999999
+    var min = Double.POSITIVE_INFINITY
     var nam = ""
     for ((name, tipeCost) in stuff) {
         if (kind == tipeCost.first && tipeCost.second <= min) {
@@ -282,15 +272,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    if (word == "") return true
-    if (chars.isEmpty()) return false
-    var charsN = mutableListOf<String>()
-    for (i in chars) charsN.add(i.lowercase())
-    val word = word.lowercase()
-    for (i in word) if ((i.toString() in charsN).not()) return false
-    return true
-}
+fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars.sorted() == word.toSet().sorted()
 
 /**
  * Средняя (4 балла)
@@ -304,7 +286,16 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val l = mutableMapOf<String, Int>()
+    for (i in list) {
+        if (i in l) l += i to (l.getOrDefault(i, 0) + 1)
+        else l += i to 1
+    }
+    val lcopy = mutableMapOf<String, Int>()
+    for ((key, value) in l) if (value != 1) lcopy += key to value
+    return lcopy
+}
 
 /**
  * Средняя (3 балла)
@@ -318,7 +309,13 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun sort(S: String): String = S.toList().sorted().joinToString(separator = "")
+
+fun hasAnagrams(words: List<String>): Boolean {
+    val l = mutableListOf<String>()
+    for (i in words) l.add(sort(i))
+    return extractRepeats(l).isNotEmpty()
+}
 
 /**
  * Сложная (5 баллов)
