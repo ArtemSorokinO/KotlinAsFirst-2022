@@ -102,11 +102,11 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val re = mutableMapOf<Int, List<String>>()
+    val re = mutableMapOf<Int, MutableList<String>>()
     for ((name, grade) in grades) {
-        re += grade to when (grade) {
-            in re -> re.getOrDefault(grade, listOf()) + name
-            else -> listOf(name)
+        when (grade) {
+            in re -> re.getOrDefault(grade, mutableListOf()).add(name)
+            else -> re += grade to mutableListOf(name)
         }
     }
     return re.toSortedMap()
@@ -143,7 +143,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMap<String, String> {
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Map<String, String> {
     for ((key, value) in b) {
         if (a[key] == value) a.remove(key)
     }
@@ -181,20 +181,14 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     if (mapB.isEmpty()) return mapA
     val mapC = mutableMapOf<String, MutableList<String>>()
     for ((key, value) in mapA) {
-        if (key !in mapC) {
-            mapC += key to mutableListOf(value)
-        } else if (value == "" && mapC.getOrDefault(key, mutableListOf()) != mutableListOf("")) {
-            mapC.getOrDefault(key, mutableListOf()).add("")
-        } else if ((key in mapB) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
-            mapC.getOrDefault(key, mutableListOf()).add(value)
-        }
+        mapC += key to mutableListOf(value)
     }
     for ((key, value) in mapB) {
         if (key !in mapC) {
             mapC += key to mutableListOf(value)
         } else if (value == "" && mapC.getOrDefault(key, mutableListOf()) != mutableListOf("")) {
             mapC.getOrDefault(key, mutableListOf()).add("")
-        } else if ((key in mapA) && (key in mapC) && (value in mapC.getOrDefault(key, mutableListOf())).not()) {
+        } else if (key in mapA && value !in mapC.getOrDefault(key, mutableListOf())) {
             mapC.getOrDefault(key, mutableListOf()).add(value)
         }
     }
@@ -275,10 +269,10 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    if (word == "") return true
-    if (chars.isEmpty()) return false
-    val charsSet = chars.map { it.lowercase() }.toSet().toList().sorted()
-    for (i in word.lowercase().toSet().map { it.toString() }.toList().sorted()) if (i !in charsSet) return false
+    //if (word == "") return true
+    //if (chars.isEmpty()) return false
+    val charsSet = chars.map { it.lowercase() }.toSet()
+    for (i in word.lowercase().toSet().map { it.toString() }) if (i !in charsSet) return false
     return true
 }
 
@@ -297,12 +291,10 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val l = mutableMapOf<String, Int>()
     for (i in list) {
-        if (i in l) l += i to (l.getOrDefault(i, 0) + 1)
+        if (i in l) l[i] = l.getOrDefault(i, 0) + 1
         else l += i to 1
     }
-    val lcopy = mutableMapOf<String, Int>()
-    for ((key, value) in l) if (value != 1) lcopy += key to value
-    return lcopy
+    return l.filterValues { it > 1 }
 }
 
 /**
@@ -317,12 +309,15 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun sort(S: String): String = S.toList().sorted().joinToString(separator = "")
 
 fun hasAnagrams(words: List<String>): Boolean {
-    val l = mutableListOf<String>()
-    for (i in words) l.add(sort(i))
-    return extractRepeats(l).isNotEmpty()
+    val m = mutableMapOf<String, MutableList<Int>>()
+    for (i in words)
+        if (i.toSet().sorted().toString() in m)
+            if (i.length in m.getOrDefault(i.toSet().sorted().toString(), mutableListOf())) return true
+            else m.getOrDefault(i, mutableListOf()).add(i.length)
+        else m += i.toSet().sorted().toString() to mutableListOf(i.length)
+    return false
 }
 
 /**

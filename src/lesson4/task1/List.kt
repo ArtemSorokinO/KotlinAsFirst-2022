@@ -212,7 +212,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  */
 
 fun factorize(n: Int): List<Int> {
-    var n: Int = n
+    var n = n
     val list = mutableListOf<Int>()
     var dl: Int
     while (n != 1) {
@@ -241,7 +241,7 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  */
 fun convert(n: Int, base: Int): List<Int> {
     val list = mutableListOf<Int>()
-    var n: Int = n
+    var n = n
     while (n > 0) {
         list.add(n % base)
         n /= base
