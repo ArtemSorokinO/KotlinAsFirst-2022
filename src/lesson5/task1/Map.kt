@@ -440,7 +440,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     }
     avg = avg.toList().sortedBy { (k, v) -> v }.reversed().toMutableMap()
     for (i in avg.keys) {
-        if (n > treasures.getOrDefault(i, Pair(0, 0)).first) {
+        if (n >= treasures.getOrDefault(i, Pair(0, 0)).first) {
             bcpc.add(i)
             n -= treasures.getOrDefault(i, Pair(0, 0)).first
         }
