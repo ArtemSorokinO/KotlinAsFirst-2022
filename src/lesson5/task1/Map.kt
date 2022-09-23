@@ -310,11 +310,13 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 
 fun hasAnagrams(words: List<String>): Boolean {
     val m = mutableMapOf<String, MutableList<Int>>()
-    for (i in words)
-        if (i.toSet().sorted().toString() in m)
-            if (i.length in m.getOrDefault(i.toSet().sorted().toString(), mutableListOf())) return true
+    for (i in words) {
+        val k = i.toSet().sorted().toString()
+        if (k in m)
+            if (i.length in m.getOrDefault(k, mutableListOf())) return true
             else m.getOrDefault(i, mutableListOf()).add(i.length)
-        else m += i.toSet().sorted().toString() to mutableListOf(i.length)
+        else m += k to mutableListOf(i.length)
+    }
     return false
 }
 
