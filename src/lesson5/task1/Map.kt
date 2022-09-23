@@ -360,6 +360,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         newFr += name to mutableSetOf()
         for (j in friend) newFr += j to mutableSetOf()
     }
+    //println("new $friends")
+    //println(newFr)
     for (i in 0..friends.size) {
         for ((name, friend) in friends) {
             for (fr in friend) if (fr !in newFr.getOrDefault(name, mutableSetOf())) newFr.getOrDefault(
@@ -367,17 +369,21 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
             ).add(fr)
         }
     }
+    //println(newFr)
     var anNewFr = newFr
     for ((name, friend) in anNewFr) {
         for ((aName, aFriend) in anNewFr)
-            for (fr in aFriend) if (fr == name) {
-                newFr.getOrDefault(aName, mutableSetOf()) += anNewFr.getOrDefault(fr, mutableSetOf())
-            }
+            if (aName != name && aFriend.isNotEmpty())
+                for (fr in aFriend) if (fr == name) {
+                    newFr.getOrDefault(aName, mutableSetOf()) += anNewFr.getOrDefault(fr, mutableSetOf())
+                }
     }
+    //println(newFr)
     anNewFr = newFr
     for ((name, friend) in anNewFr) for (fr in friend) {
         if (fr == name) newFr.getOrDefault(name, mutableSetOf()).remove(fr)
     }
+    //println(newFr)
     return newFr
 }
 
@@ -400,8 +406,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     for (i in 0..number / 2 + 1) {
-        if (i in list && number - i in list && (list.indexOf(i) != list.indexOf(number - i))) {
-            return Pair(list.indexOf(i), list.indexOf(number - i))
+        if (i in list && number - i in list && (list.indexOf(i) != list.size - 1 - list.reversed()
+                .indexOf(number - i))
+        ) {
+            return Pair(list.indexOf(i), list.size - 1 - list.reversed().indexOf(number - i))
         }
     }
     return Pair(-1, -1)
