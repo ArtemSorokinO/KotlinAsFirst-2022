@@ -431,7 +431,6 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    println(treasures)
     var n = capacity.toDouble()
     var avg = mutableMapOf<String, Double>()
     val bcpc = mutableSetOf<String>()
@@ -445,5 +444,5 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             n -= treasures.getOrDefault(i, Pair(0, 0)).first
         }
     }
-    return bcpc
+    return bcpc.toSortedSet()
 }
