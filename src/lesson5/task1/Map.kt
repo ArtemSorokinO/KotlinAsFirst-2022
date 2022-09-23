@@ -3,6 +3,7 @@
 package lesson5.task1
 
 import ru.spbstu.wheels.rangeTo
+import ru.spbstu.wheels.toMutableMap
 import java.io.File.separator
 import java.util.DoubleSummaryStatistics
 import java.util.StringJoiner
@@ -374,7 +375,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
                 newFr[aName] = (newFr.getOrDefault(aName, mutableSetOf()) +
                         anNewFr.getOrDefault(fr, mutableSetOf()) - aName).toMutableSet()
                 //newFr.getOrDefault(aName, mutableSetOf()) += anNewFr.getOrDefault(fr, mutableSetOf())
-                // закоменченный вариант ломался на некоторых данных и выбрасывал concurrentmodificationexception
+                //закоменченный вариант ломался на некоторых данных и выбрасывал concurrentmodificationexception
             }
     }
     return newFr
@@ -429,4 +430,20 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    println(treasures)
+    var n = capacity.toDouble()
+    var avg = mutableMapOf<String, Double>()
+    val bcpc = mutableSetOf<String>()
+    for ((key, value) in treasures) {
+        avg += key to (value.second.toDouble() / value.first)
+    }
+    avg = avg.toList().sortedBy { (k, v) -> v }.reversed().toMutableMap()
+    for (i in avg.keys) {
+        if (n > treasures.getOrDefault(i, Pair(0, 0)).first) {
+            bcpc.add(i)
+            n -= treasures.getOrDefault(i, Pair(0, 0)).first
+        }
+    }
+    return bcpc
+}
