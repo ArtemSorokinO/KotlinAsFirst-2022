@@ -367,13 +367,15 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
             ).add(fr)
         }
     }
-    for ((name, friend) in newFr) {
-        for ((aName, aFriend) in newFr)
+    var anNewFr = newFr
+    for ((name, friend) in anNewFr) {
+        for ((aName, aFriend) in anNewFr)
             for (fr in aFriend) if (fr == name) {
-                newFr.getOrDefault(aName, mutableSetOf()) += newFr.getOrDefault(fr, mutableSetOf())
+                newFr.getOrDefault(aName, mutableSetOf()) += anNewFr.getOrDefault(fr, mutableSetOf())
             }
     }
-    for ((name, friend) in newFr) for (fr in friend) {
+    anNewFr = newFr
+    for ((name, friend) in anNewFr) for (fr in friend) {
         if (fr == name) newFr.getOrDefault(name, mutableSetOf()).remove(fr)
     }
     return newFr
@@ -396,7 +398,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (i in 0..number / 2 + 1) {
+        if (i in list && number - i in list && (list.indexOf(i) != list.indexOf(number - i))) {
+            return Pair(list.indexOf(i), list.indexOf(number - i))
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
