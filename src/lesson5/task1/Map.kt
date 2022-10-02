@@ -456,7 +456,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var i = treasures.size
     while (i > 0) {
         if (mat[i][cap] != mat[i - 1][cap]) {
-            rezTre.add(tre[i - 1].toString())
+            rezTre.add(tre[i - 1])
             cap -= weight[i - 1]
         }
         i--
