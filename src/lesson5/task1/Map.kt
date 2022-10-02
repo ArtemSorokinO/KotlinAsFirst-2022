@@ -3,10 +3,13 @@
 package lesson5.task1
 
 import ru.spbstu.wheels.rangeTo
+import ru.spbstu.wheels.sorted
 import ru.spbstu.wheels.toMutableMap
 import java.io.File.separator
+import java.util.Arrays
 import java.util.DoubleSummaryStatistics
 import java.util.StringJoiner
+import kotlin.math.max
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -399,11 +402,16 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in 0..number / 2 + 1) {
-        if (i in list && number - i in list && (list.indexOf(i) != list.size - 1 - list.reversed()
-                .indexOf(number - i))
-        ) {
-            return Pair(list.indexOf(i), list.size - 1 - list.reversed().indexOf(number - i))
+    if (list.isEmpty()) return Pair(-1, -1)
+    val map = mutableMapOf<Int, Int>()
+    for (i in list.indices) map += i to list[i]
+    var i = 0
+    var j = list.size - 1
+    while (i < j) {
+        when {
+            map.getOrDefault(i, 0) + map.getOrDefault(j, 0) == number -> return Pair(i, j)
+            map.getOrDefault(i, 0) + map.getOrDefault(j, 0) > number -> j--
+            else -> i++
         }
     }
     return Pair(-1, -1)
@@ -431,18 +439,27 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    var n = capacity.toDouble()
-    var avg = mutableMapOf<String, Double>()
-    val bcpc = mutableSetOf<String>()
-    for ((key, value) in treasures) {
-        avg += key to (value.second.toDouble() / value.first)
-    }
-    avg = avg.toList().sortedBy { (k, v) -> v }.reversed().toMutableMap()
-    for (i in avg.keys) {
-        if (n >= treasures.getOrDefault(i, Pair(0, 0)).first) {
-            bcpc.add(i)
-            n -= treasures.getOrDefault(i, Pair(0, 0)).first
+    val weight = treasures.values.map { it.first }
+    val value = treasures.values.map { it.second }
+    val tre = treasures.keys.toMutableList()
+    val rezTre = mutableSetOf<String>()
+    val mat = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
+    for (i in 1..treasures.size)
+        for (j in 0..capacity) {
+            if (j >= weight[i - 1]) {
+                mat[i][j] = max(mat[i - 1][j], mat[i - 1][j - weight[i - 1]] + value[i - 1])
+            } else {
+                mat[i][j] = mat[i - 1][j]
+            }
         }
+    var cap = capacity
+    var i = treasures.size
+    while (i > 0) {
+        if (mat[i][cap] != mat[i - 1][cap]) {
+            rezTre.add(tre[i - 1].toString())
+            cap -= weight[i - 1]
+        }
+        i--
     }
-    return bcpc.toSortedSet()
+    return rezTre
 }

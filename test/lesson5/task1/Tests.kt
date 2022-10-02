@@ -332,7 +332,7 @@ class Tests {
         )
         assertEquals(
             Pair(0, 1),
-            findSumOfTwo(listOf(0, 0), 0)
+            findSumOfTwo(listOf(0, 0, 6, 7, 9), 0)
         )
     }
 
@@ -351,6 +351,27 @@ class Tests {
             bagPacking(
                 mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
                 450
+            )
+        )
+        assertEquals(
+            setOf(
+                "7",
+                "3",
+                "2",
+                "1",
+                "0"
+            ),
+            bagPacking(
+                mapOf(
+                    "0" to Pair(432, 4),
+                    "1" to Pair(473, 36),
+                    "2" to Pair(1, 1),
+                    "3" to Pair(1, 1),
+                    "4" to Pair(1, 1),
+                    "5" to Pair(1, 1),
+                    "6" to Pair(1, 1),
+                    "7" to Pair(5, 269),
+                ), 912
             )
         )
     }
