@@ -403,17 +403,13 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.isEmpty()) return Pair(-1, -1)
-    val list = list.sorted()
-    val map = mutableMapOf<Int, Int>()
-    for (i in list.indices) map += i to list[i]
+    val lst = list.sorted()
     var i = 0
     var j = list.size - 1
-    while (i < j) {
-        when {
-            map.getOrDefault(i, 0) + map.getOrDefault(j, 0) == number -> return Pair(i, j)
-            map.getOrDefault(i, 0) + map.getOrDefault(j, 0) > number -> j--
-            else -> i++
-        }
+    while (i < j) when {
+        lst[i] + lst[j] == number -> return Pair(list.indexOf(lst[i]), list.size - 1 - list.reversed().indexOf(lst[j]))
+        lst[i] + lst[j] < number -> i++
+        lst[i] + lst[j] > number -> j--
     }
     return Pair(-1, -1)
 }
