@@ -313,6 +313,8 @@ fun mostExpensive(description: String): String {
         }
     } catch (e: IndexOutOfBoundsException) {
         return ""
+    } catch (e: NumberFormatException) {
+        return ""
     }
     return ans
 }
