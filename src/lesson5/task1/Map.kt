@@ -181,24 +181,14 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().int
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    if (mapA.isEmpty()) return mapB
-    if (mapB.isEmpty()) return mapA
-    val mapC = mutableMapOf<String, MutableList<String>>()
-    for ((key, value) in mapA) {
-        mapC += key to mutableListOf(value)
-    }
+    val mapA = mapA.toMutableMap()
     for ((key, value) in mapB) {
-        if (key !in mapC) {
-            mapC += key to mutableListOf(value)
-        } else if (value == "" && mapC.getOrDefault(key, mutableListOf()) != mutableListOf("")) {
-            mapC.getOrDefault(key, mutableListOf()).add("")
-        } else if (key in mapA && value !in mapC.getOrDefault(key, mutableListOf())) {
-            mapC.getOrDefault(key, mutableListOf()).add(value)
+        if (mapA[key] != value) {
+            if (key in mapA.keys) mapA[key] += ", $value"
+            else mapA[key] = value
         }
     }
-    val mapD = mutableMapOf<String, String>()
-    for ((key, value) in mapC) mapD += key to value.joinToString()
-    return mapD
+    return mapA
 }
 
 
@@ -402,15 +392,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    if (list.isEmpty()) return Pair(-1, -1)
-    val lst = list.sorted()
-    var i = 0
-    var j = list.size - 1
-    while (i < j) when {
-        lst[i] + lst[j] == number -> return Pair(list.indexOf(lst[i]), list.size - 1 - list.reversed().indexOf(lst[j]))
-        lst[i] + lst[j] < number -> i++
-        lst[i] + lst[j] > number -> j--
-    }
+    val lst = mutableMapOf<Int, Int>()
+    for (i in list.indices) lst += list[i] to i
+    for ((i, v) in list.withIndex())
+        if (number - v in lst && lst[number - v] != i) return Pair(lst[number - v]!!, i).sorted()
     return Pair(-1, -1)
 }
 

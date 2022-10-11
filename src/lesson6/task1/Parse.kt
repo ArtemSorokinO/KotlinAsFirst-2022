@@ -2,6 +2,15 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+import ru.spbstu.wheels.NegativeInfinity
+import ru.spbstu.wheels.anyIndexed
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
+import java.lang.NumberFormatException
+import kotlin.math.max
+import kotlin.reflect.typeOf
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +83,41 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun isDateRight(str: String): Boolean {
+    return false
+}
+
+fun dateStrToDigit(str: String): String {
+    val month = mapOf(
+        "января" to 1,
+        "февраля" to 2,
+        "марта" to 3,
+        "апреля" to 4,
+        "мая" to 5,
+        "июня" to 6,
+        "июля" to 7,
+        "августа" to 8,
+        "сентября" to 9,
+        "октября" to 10,
+        "ноября" to 11,
+        "декабря" to 12
+    )
+    val st = str.split(" ")
+    if (st.size != 3) return ""
+    try {
+        val a1 = st[0].toInt()
+        val a2 = month[st[1]]
+        val a3 = st[2]
+        if (a2!! <= 0 || a1 > daysInMonth(a2, a3.toInt())) return ""
+        return twoDigitStr(a1) + "." + twoDigitStr(a2) + "." + a3
+    } catch (e: NumberFormatException) {
+        return ""
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    } catch (e: NullPointerException) {
+        return ""
+    }
+}
 
 /**
  * Средняя (4 балла)
@@ -86,7 +129,38 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val month = listOf(
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря"
+    )
+    val st = digital.split(".")
+    if (st.size != 3) return ""
+    try {
+
+        val a1 = st[0].toInt()
+        val a2 = st[1].toInt()
+        val a3 = st[2]
+        if (a2 <= 0 || a1 > daysInMonth(a2, a3.toInt())) return ""
+        return a1.toString() + " " + month[a2 - 1] + " " + a3
+    } catch (e: NumberFormatException) {
+        return ""
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    } catch (e: NullPointerException) {
+        return ""
+    }
+}
 
 /**
  * Средняя (4 балла)
@@ -102,7 +176,18 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val plus = if ("+" in phone) "+" else ""
+    var phone = phone.replace(" ", "").replace("-", "").replace("+", "")
+    if ("()" in phone) return ""
+    phone = phone.replace("(", "").replace(")", "")
+    try {
+        phone.toLong()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return plus + phone
+}
 
 /**
  * Средняя (5 баллов)
@@ -114,7 +199,16 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    return try {
+        val str = jumps.replace("-", "").replace("%", "").split(" ").filter { it != "" }
+        var max = -1
+        for (i in str) if (i.toInt() > max) max = i.toInt()
+        max
+    } catch (e: NumberFormatException) {
+        -1
+    }
+}
 
 /**
  * Сложная (6 баллов)
@@ -127,7 +221,24 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    var max = -1
+    val str = jumps.split(" ")
+    try {
+        jumps.replace(" ", "").replace("+", "").replace("-", "").replace("%", "").toLong()
+    } catch (e: NumberFormatException) {
+        return -1
+    }
+    for (i in str) {
+        if (try {
+                i.toInt() > max && "+" in str[str.indexOf(i) + 1]
+            } catch (e: NumberFormatException) {
+                continue
+            }
+        ) max = i.toInt()
+    }
+    return max
+}
 
 /**
  * Сложная (6 баллов)
@@ -136,9 +247,24 @@ fun bestHighJump(jumps: String): Int = TODO()
  * использующее целые положительные числа, плюсы и минусы, разделённые пробелами.
  * Наличие двух знаков подряд "13 + + 10" или двух чисел подряд "1 2" не допускается.
  * Вернуть значение выражения (6 для примера).
- * Про нарушении формата входной строки бросить исключение IllegalArgumentException
+ * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val control = expression.replace(" + ", "").replace(" - ", "")
+    if (!(control.all { it.isDigit() })) throw IllegalArgumentException()
+    try {
+        val str = expression.split(" ")
+        var ans = str[0].toInt()
+        var i = 1
+        while (i < str.size) {
+            if (str[i] == "+") ans += str[i + 1].toInt() else ans -= str[i + 1].toInt()
+            i += 2
+        }
+        return ans
+    } catch (e: NumberFormatException) {
+        throw IllegalArgumentException()
+    }
+}
 
 /**
  * Сложная (6 баллов)
@@ -149,7 +275,19 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val strM = str.split(" ").map { it.lowercase() }
+    try {
+        var ind = 0
+        for (i in strM.indices) if (strM[i] == strM[i + 1]) return ind
+        else {
+            ind += strM[i].length + 1
+        }
+    } catch (e: IndexOutOfBoundsException) {
+        return -1
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -162,7 +300,22 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val str = description.replace(";", "").split(" ")
+    var max = 0.0
+    var ans = ""
+    try {
+        for (i in 1..str.size step 2) {
+            if (str[i].toDouble() >= max) {
+                max = str[i].toDouble()
+                ans = str[i - 1]
+            }
+        }
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    }
+    return ans
+}
 
 /**
  * Сложная (6 баллов)
@@ -213,4 +366,46 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val control =
+        commands.replace(" ", "").replace("+", "").replace("-", "")
+            .replace("<", "").replace(">", "").replace("[", "")
+            .replace("]", "")
+    if (control != "" || commands.count { it == '[' } != commands.count { it == ']' }) throw IllegalArgumentException()
+    val arr = MutableList(size = cells) { 0 }
+    if (commands.isEmpty()) return arr
+    val temporary = mutableListOf<Int>()
+    val sqb1 = mutableListOf<Int>()
+    val sqb2 = mutableListOf<Int>()
+    for (i in commands.indices) {
+        if (commands[i] == '[') temporary.add(i)
+        else if (commands[i] == ']') {
+            sqb1.add(temporary.last())
+            sqb2.add(i)
+            temporary.removeLast()
+        }
+    }
+    var pos = cells / 2
+    var step = 0
+    var i = 0
+    try {
+        while (i < limit) {
+            when (commands[step]) {
+                '+' -> arr[pos]++
+                '-' -> arr[pos]--
+                '<' -> pos--
+                '>' -> pos++
+                '[' -> if (arr[pos] == 0) step = sqb2[sqb1.indexOf(step)]
+                ']' -> if (arr[pos] != 0) step = sqb1[sqb2.indexOf(step)]
+            }
+            if (pos == arr.size) throw IllegalStateException()
+            step++
+            i++
+        }
+    } catch (e: IndexOutOfBoundsException) {
+        if (step == commands.length) return arr
+        throw IllegalStateException()
+    }
+    return arr
+}
