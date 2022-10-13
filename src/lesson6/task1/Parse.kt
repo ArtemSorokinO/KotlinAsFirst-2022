@@ -246,7 +246,7 @@ fun bestHighJump(jumps: String): Int {
  * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (!expression.matches(Regex("""(\d+(\s[+-]\s\d|)\s?)*"""))) throw IllegalArgumentException()
+    if (!expression.matches(Regex("""(\d+(\s[+-]\s|\s?))*"""))) throw IllegalArgumentException()
     try {
         val str = expression.split(" ")
         var ans = str[0].toInt()
@@ -296,7 +296,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""([A-я]+\s\d+(\.\d*)?;?\s?)*"""))) return ""
+    if (!description.matches(Regex("""((\w|\W)+\s\d+(\.\d*)?;?\s?)*"""))) return ""
     val str = description.replace(";", "").split(" ")
     var max = 0.0
     var ans = ""
@@ -327,6 +327,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
+    if (roman.isEmpty()) return -1
     var roman = roman
     val rom = listOf("CM", "M", "CD", "D", "XC", "C", "XL", "L", "IX", "X", "IV", "V", "I")
     val notRom = listOf(900, 1000, 400, 500, 90, 100, 40, 50, 9, 10, 4, 5, 1)
