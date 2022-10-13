@@ -394,8 +394,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val lst = mutableMapOf<Int, Int>()
     for (i in list.indices) lst += list[i] to i
-    for ((i, v) in list.withIndex())
-        if (number - v in lst && lst[number - v] != i) return Pair(lst[number - v]!!, i).sorted()
+    for ((index, value) in list.withIndex())
+        if (number - value in lst && lst[number - value] != index) return Pair(lst[number - value]!!, index).sorted()
     return Pair(-1, -1)
 }
 

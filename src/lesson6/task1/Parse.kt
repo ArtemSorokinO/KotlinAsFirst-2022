@@ -222,13 +222,9 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
+    if (!jumps.matches(Regex("""(\d+\s[+\-%]+\s?)*"""))) return -1
     var max = -1
     val str = jumps.split(" ")
-    try {
-        jumps.replace(" ", "").replace("+", "").replace("-", "").replace("%", "").toLong()
-    } catch (e: NumberFormatException) {
-        return -1
-    }
     for (i in str) {
         if (try {
                 i.toInt() > max && "+" in str[str.indexOf(i) + 1]
@@ -250,8 +246,7 @@ fun bestHighJump(jumps: String): Int {
  * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val control = expression.replace(" + ", "").replace(" - ", "")
-    if (!(control.all { it.isDigit() })) throw IllegalArgumentException()
+    if (!expression.matches(Regex("""(\d+(\s[+-]\s\d|)\s?)*"""))) throw IllegalArgumentException()
     try {
         val str = expression.split(" ")
         var ans = str[0].toInt()
@@ -301,6 +296,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
+    if (!description.matches(Regex("""([A-я]+\s\d+(\.\d*)?;?\s?)*"""))) return ""
     val str = description.replace(";", "").split(" ")
     var max = 0.0
     var ans = ""
@@ -330,7 +326,20 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    var roman = roman
+    val rom = listOf("CM", "M", "CD", "D", "XC", "C", "XL", "L", "IX", "X", "IV", "V", "I")
+    val notRom = listOf(900, 1000, 400, 500, 90, 100, 40, 50, 9, 10, 4, 5, 1)
+    var sum = 0
+    for (i in rom.indices) {
+        while (rom[i] in roman) {
+            sum += notRom[i]
+            roman = roman.replaceFirst(rom[i], "")
+        }
+    }
+    if (roman.isNotEmpty()) return -1
+    return sum
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -377,15 +386,15 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if (control != "" || commands.count { it == '[' } != commands.count { it == ']' }) throw IllegalArgumentException()
     val arr = MutableList(size = cells) { 0 }
     if (commands.isEmpty()) return arr
-    val temporary = mutableListOf<Int>()
+    val timed = mutableListOf<Int>()
     val sqb1 = mutableListOf<Int>()
     val sqb2 = mutableListOf<Int>()
     for (i in commands.indices) {
-        if (commands[i] == '[') temporary.add(i)
+        if (commands[i] == '[') timed.add(i)
         else if (commands[i] == ']') {
-            sqb1.add(temporary.last())
+            sqb1.add(timed.last())
             sqb2.add(i)
-            temporary.removeLast()
+            timed.removeLast()
         }
     }
     var pos = cells / 2
@@ -401,7 +410,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 '[' -> if (arr[pos] == 0) step = sqb2[sqb1.indexOf(step)]
                 ']' -> if (arr[pos] != 0) step = sqb1[sqb2.indexOf(step)]
             }
-            if (pos == arr.size) throw IllegalStateException()
+            if (pos == arr.size || pos < 0) throw IllegalStateException()
             step++
             i++
         }
