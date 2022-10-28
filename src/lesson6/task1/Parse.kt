@@ -369,7 +369,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         commands.replace(" ", "").replace("+", "").replace("-", "")
             .replace("<", "").replace(">", "").replace("[", "")
             .replace("]", "")
-    if (control != "" || commands.count { it == '[' } != commands.count { it == ']' }) throw IllegalArgumentException()
+    if (control != "" || commands.count { it == '[' } != commands.count { it == ']' } ||
+        commands.indexOf("[") > commands.indexOf("]") ||
+        commands.lastIndexOf("]") < commands.lastIndexOf("["))
+        throw IllegalArgumentException()
     val arr = MutableList(size = cells) { 0 }
     if (commands.isEmpty()) return arr
     val timed = mutableListOf<Int>()
