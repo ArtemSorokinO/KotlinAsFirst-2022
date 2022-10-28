@@ -83,9 +83,6 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun isDateRight(str: String): Boolean {
-    return false
-}
 
 fun dateStrToDigit(str: String): String {
     val month = mapOf(
@@ -177,16 +174,11 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val plus = if ("+" in phone) "+" else ""
-    var phone = phone.replace(" ", "").replace("-", "").replace("+", "")
-    if ("()" in phone) return ""
-    phone = phone.replace("(", "").replace(")", "")
-    try {
-        phone.toLong()
-    } catch (e: NumberFormatException) {
-        return ""
-    }
-    return plus + phone
+    var res = phone.replace(" ", "").replace("-", "")
+    if ("()" in res) return ""
+    res = res.replace("(", "").replace(")", "")
+    if (res.matches(Regex("""\+?\d+"""))) return res
+    return ""
 }
 
 /**
@@ -199,8 +191,8 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int {
-    return try {
+fun bestLongJump(jumps: String): Int =
+    try {
         val str = jumps.replace("-", "").replace("%", "").split(" ").filter { it != "" }
         var max = -1
         for (i in str) if (i.toInt() > max) max = i.toInt()
@@ -208,7 +200,7 @@ fun bestLongJump(jumps: String): Int {
     } catch (e: NumberFormatException) {
         -1
     }
-}
+
 
 /**
  * Сложная (6 баллов)
@@ -226,13 +218,9 @@ fun bestHighJump(jumps: String): Int {
     var max = -1
     val str = jumps.split(" ")
     for (i in str) {
-        if (try {
-                i.toInt() > max && "+" in str[str.indexOf(i) + 1]
-            } catch (e: NumberFormatException) {
-                continue
-            }
-        ) max = i.toInt()
+        if (i.toIntOrNull() != null && i.toInt() > max && "+" in str[str.indexOf(i) + 1]) max = i.toInt()
     }
+
     return max
 }
 
@@ -272,15 +260,12 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     val strM = str.split(" ").map { it.lowercase() }
-    try {
-        var ind = 0
-        for (i in strM.indices) if (strM[i] == strM[i + 1]) return ind
-        else {
-            ind += strM[i].length + 1
-        }
-    } catch (e: IndexOutOfBoundsException) {
-        return -1
+    var ind = 0
+    for (i in strM.dropLast(1).indices) if (strM[i] == strM[i + 1]) return ind
+    else {
+        ind += strM[i].length + 1
     }
+
     return -1
 }
 
