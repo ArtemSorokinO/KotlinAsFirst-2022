@@ -132,6 +132,7 @@ fun centerFile(inputName: String, outputName: String) {
     }
 }
 
+
 /**
  * Сложная (20 баллов)
  *
@@ -160,7 +161,29 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val maxLength = File(inputName).readLines().maxOfOrNull { it.replace(Regex("""\s"""), " ").trim().length }
+    File(outputName).bufferedWriter().use {
+        if (maxLength != null) {
+            for (line in File(inputName).readLines().map { it.replace(Regex("""\s"""), " ") }) {
+                val parts = Regex("""\s""").split(line.trim()).toMutableList()
+                if (line.isNotBlank() && parts.size != 1) {
+                    var raz = maxLength - line.trim().length
+                    var i = 0
+                    while (raz > 0) {
+                        parts[i] += " "
+                        if (i < parts.size - 2) i++
+                        else i = 0
+                        raz--
+                    }
+                    it.write(parts.joinToString(" "))
+                    it.newLine()
+                } else {
+                    it.write(line.trim())
+                    it.newLine()
+                }
+            }
+        }
+    }
 }
 
 /**
