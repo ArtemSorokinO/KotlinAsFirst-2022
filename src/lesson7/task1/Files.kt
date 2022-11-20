@@ -164,7 +164,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val maxLength = File(inputName).readLines().maxOfOrNull { it.replace(Regex(" +"), " ").trim().length }
     File(outputName).bufferedWriter().use {
         if (maxLength != null) {
-            for (line in File(inputName).readLines().map { it.replace(Regex("""\s"""), " ") }) {
+            for (line in File(inputName).readLines().map { it.replace(Regex(" +"), " ") }) {
                 val parts = Regex("""\s""").split(line.trim()).toMutableList()
                 if (line.isNotBlank() && parts.size != 1) {
                     var raz = maxLength - line.trim().length
