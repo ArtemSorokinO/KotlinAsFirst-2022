@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.IllegalArgumentException
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -275,6 +276,18 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     TODO()
 }
 
+fun plotiNalogi(table: Map<String, Int>, taxes: String): Map<String, Double> {
+    for (i in table) if (!i.key.trim().matches(Regex("""[A-яёЁ ]+"""))) throw IllegalArgumentException()
+    val lst = taxes.split("\n")
+    val rez = mutableMapOf<String, Double>()
+    for (pred in lst) {
+        if (!pred.matches(Regex("""[A-яёЁ ]+ - [A-яёЁ ]+ - [1-9][0-9]*"""))) throw IllegalArgumentException()
+        val predd = pred.split("-")
+        rez += predd[0].trim() to (predd[2].toDouble() * table.getOrDefault(predd[1].trim(), 13) / 100.0)
+    }
+    return rez.toList().sortedBy { (k, v) -> v }.toMap()
+}
+
 /**
  * Сложная (22 балла)
  *
@@ -320,8 +333,112 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val reader = File(inputName).bufferedReader()
+    var bukva = reader.read()
+    var ok = false
+    var ok2 = false
+    var lastb = true
+    var timed = ""
+    var sim: Char
+    val stek = mutableListOf<String>()
+    File(outputName).bufferedWriter().use {
+        it.write("<html>\n<body>\n<p>\n")
+        while (bukva.toChar() == '\n') bukva = reader.read()
+        while (bukva != -1) {
+            sim = bukva.toChar()
+            bukva = reader.read()
+            if ((sim == '*' || sim == '~') && (sim in timed || timed.isEmpty())) {
+                timed += sim
+                ok = false
+            } else {
+                if (sim != '\n' && !sim.isWhitespace()) {
+                    ok = false
+                    lastb = true
+                }
+                if (sim == '\n') {
+                    if (lastb) {
+                        if (ok) {
+                            it.write("</p>\n")
+                            ok = false
+                            if (bukva == -1) {
+                                it.write("</body>\n</html>")
+                                return
+                            } else {
+                                it.write("\n<p>")
+                                lastb = false
+                                continue
+                            }
+                        } else ok = true
+                    }
+                }
+                if (sim !in timed && (sim == '*' || sim == '~')) {
+                    ok2 = true
+                }
+                when (timed) {
+                    "***" -> {
+                        if ("<b>" in stek && "<i>" in stek) {
+                            it.write("</b></i>")
+                            stek.removeLast()
+                            stek.removeLast()
+                        } else {
+                            it.write("<b><i>")
+                            stek.add("<b>")
+                            stek.add("<i>")
+                        }
+                        timed = ""
+                    }
+
+                    "**" -> {
+                        if ("<b>" in stek) {
+                            if (stek.last() == "<b>") {
+                                it.write("</b>")
+                                stek.removeLast()
+                            }
+                        } else {
+                            it.write("<b>")
+                            stek.add("<b>")
+                        }
+                        timed = ""
+                    }
+
+                    "*" -> {
+                        if ("<i>" in stek) {
+                            if (stek.last() == "<i>") {
+                                it.write("</i>")
+                                stek.removeLast()
+                            }
+                        } else {
+                            it.write("<i>")
+                            stek.add("<i>")
+                        }
+                        timed = ""
+                    }
+
+                    "~~" -> {
+                        if ("<s>" in stek) {
+                            if (stek.last() == "<s>") {
+                                it.write("</s>")
+                                stek.removeLast()
+                            }
+                        } else {
+                            it.write("<s>")
+                            stek.add("<s>")
+                        }
+                        timed = ""
+                    }
+                }
+                if (ok2) {
+                    timed = sim.toString()
+                    ok2 = false
+                } else {
+                    it.write(sim.toString())
+                }
+            }
+        }
+        it.write("\n</p>\n</body>\n</html>")
+    }
 }
 
 /**

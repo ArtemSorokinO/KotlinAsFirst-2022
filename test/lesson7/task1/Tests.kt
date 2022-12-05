@@ -1,5 +1,7 @@
 package lesson7.task1
 
+import lesson6.task1.computeDeviceCells
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -232,7 +234,9 @@ Basic, Ruby, Swift.
     }
 
 
-    private fun checkHtmlSimpleExample() {
+    @Test
+    @Tag("22")
+    fun checkHtmlSimpleExample() {
         val result = File("temp.html").readText().replace(Regex("[\\s\\n\\t]"), "")
         val expected =
             """
