@@ -168,20 +168,17 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             for (line in File(inputName).readLines().map { it.replace(Regex(" +"), " ") }) {
                 val parts = Regex("""\s""").split(line.trim()).toMutableList()
                 if (line.isNotBlank() && parts.size != 1) {
-                    var raz = maxLength - line.trim().length
+                    var gap = maxLength - line.trim().length
                     var i = 0
-                    while (raz > 0) {
+                    while (gap > 0) {
                         parts[i] += " "
                         if (i < parts.size - 2) i++
                         else i = 0
-                        raz--
+                        gap--
                     }
                     it.write(parts.joinToString(" "))
-                    it.newLine()
-                } else {
-                    it.write(line.trim())
-                    it.newLine()
-                }
+                } else it.write(line.trim())
+                it.newLine()
             }
         }
     }
@@ -275,6 +272,9 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     TODO()
 }
+/**
+ * задача из теста на автомат
+ */
 
 fun plotiNalogi(table: Map<String, Int>, taxes: String): Map<String, Double> {
     for (i in table) if (!i.key.trim().matches(Regex("""[A-яёЁ ]+"""))) throw IllegalArgumentException()
