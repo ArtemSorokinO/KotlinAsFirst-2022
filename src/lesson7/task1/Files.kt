@@ -340,7 +340,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var str = reader.readLine()
     var obzat = prevStr
     File(outputName).bufferedWriter().use {
-        it.write("<html>\n<body>")
+        it.write("<html><body>")
         while (str != null) {
             if (str.isEmpty() && prevStr.isNotEmpty()) {
                 obzat = Regex("""~~([\w\W]*?)~~""").replace(
@@ -350,9 +350,9 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                         ) { "<b>" + it.value.replace("**", "") + "</b>" }
                     ) { "<i>" + it.value.replace("*", "") + "</i>" }
                 ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-                it.write("\n<p>$obzat</p>")
+                it.write("<p>$obzat</p>")
                 obzat = ""
-            } else obzat += "$str\n"
+            } else obzat += "$str"
             prevStr = str
             str = reader.readLine()
         }
@@ -363,8 +363,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 ) { "<b>" + it.value.replace("**", "") + "</b>" }
             ) { "<i>" + it.value.replace("*", "") + "</i>" }
         ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-        it.write("\n<p>$obzat</p>\n")
-        it.write("</body>\n</html>")
+        it.write("<p>$obzat</p>")
+        it.write("</body></html>")
     }
 
 }
