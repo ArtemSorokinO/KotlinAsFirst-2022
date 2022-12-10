@@ -342,28 +342,27 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             ) { "<b>" + it.value.replace("**", "") + "</b>" }
         ) { "<i>" + it.value.replace("*", "") + "</i>" }
     ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-    File(inputName).writeText(file)
-    val reader = File(inputName).bufferedReader()
-    var prevStr = reader.readLine()
-    var str = reader.readLine()
+    val reader = file.split("\n")
+    var prevStr = reader[0]
+
     var f = true
-    if (prevStr == null) {
+    if (file.length == 1) {
         f = false
     }
-    var obzat = prevStr
+    var obzat = ""
     File(outputName).bufferedWriter().use {
         it.write("<html><body>")
         if (f) {
-            while (str != null) {
-                if (str.isEmpty() && prevStr.isNotEmpty()) {
+            for(str in file.split("\n")) {
+                if (str == "\r" && prevStr != "\r") {
                     it.write("<p>$obzat</p>")
                     obzat = ""
-                } else obzat += str.replace("\r", "").replace("\t", "")
+                } else obzat += str
                 prevStr = str
-                str = reader.readLine()
             }
             it.write("<p>$obzat</p>")
-        } else it.write("<p></p>")
+
+        } else it.write("<p>$prevStr</p>")
         it.write("</body></html>")
     }
 
