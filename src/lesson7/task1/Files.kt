@@ -342,7 +342,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         it.write("<html>\n<body>")
         while (str != null) {
-            if (str.isEmpty()) {
+            if (str.isEmpty() && prevStr.isNotEmpty()) {
                 obzat = Regex("""\*\*[\w\W]+?\*\*""").replace(obzat) { "<b>" + it.value.replace("**", "") + "</b>" }
                 obzat = Regex("""\*[\w\W]+?\*""").replace(obzat) { "<i>" + it.value.replace("*", "") + "</i>" }
                 obzat = Regex("""~~[\w\W]+?~~""").replace(obzat) { "<s>" + it.value.replace("~~", "") + "</s>" }
