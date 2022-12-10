@@ -339,36 +339,164 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var prevStr = reader.readLine()
     var str = reader.readLine()
     var f = true
+    var timed = ""
+    var ok = false
     if (prevStr == null) {
         f = false
     }
+    val stek = mutableListOf<String>()
     var obzat = prevStr
     File(outputName).bufferedWriter().use {
         it.write("<html><body>")
         if (f) {
             while (str != null) {
                 if ((str.isEmpty() || str.isBlank()) && (prevStr.isNotEmpty() || prevStr.isNotBlank())) {
-                    obzat = Regex("""~~([\w\W]*?)~~""").replace(
-                        Regex("""\*([\w\W]*?)\*""").replace(
-                            Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                                obzat
-                            ) { "<b>" + it.value.replace("**", "") + "</b>" }
-                        ) { "<i>" + it.value.replace("*", "") + "</i>" }
-                    ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-                    it.write("<p>$obzat</p>")
+                    val chObzat = buildString {
+                        for (i in obzat) {
+                            if ((i == '*' || i == '~') && (i in timed || timed == "")) {
+                                timed += i
+                            } else {
+                                if (i !in timed && (i == '*' || i == '~')) {
+                                    ok = true
+                                }
+                                when (timed) {
+                                    "" -> none()
+                                    "***" -> {
+                                        if ("<b>" in stek && "<i>" in stek) {
+                                            append("</" + stek.last().substring(1))
+                                            stek.removeLast()
+                                            append("</" + stek.last().substring(1))
+                                            stek.removeLast()
+                                        } else {
+                                            append("<b><i>")
+                                            stek.add("<b>")
+                                            stek.add("<i>")
+                                        }
+                                        timed = ""
+                                    }
+
+                                    "**" -> {
+                                        if ("<b>" in stek && stek.last() == "<b>") {
+                                            append("</b>")
+                                            stek.removeLast()
+                                        } else {
+                                            append("<b>")
+                                            stek.add("<b>")
+                                        }
+                                        timed = ""
+                                    }
+
+                                    "*" -> {
+                                        if ("<i>" in stek && stek.last() == "<i>") {
+                                            append("</i>")
+                                            stek.removeLast()
+                                        } else {
+                                            append("<i>")
+                                            stek.add("<i>")
+                                        }
+                                        timed = ""
+                                    }
+
+                                    "~~" -> {
+                                        if ("<s>" in stek && stek.last() == "<s>") {
+                                            append("</s>")
+                                            stek.removeLast()
+                                        } else {
+                                            append("<s>")
+                                            stek.add("<s>")
+                                        }
+                                        timed = ""
+                                    }
+                                }
+                                if (ok) {
+                                    timed = i.toString()
+                                    ok = false
+                                } else {
+                                    append(i)
+                                }
+
+                            }
+
+
+                        }
+                    }
+                    it.write("<p>$chObzat</p>")
                     obzat = ""
                 } else obzat += str
                 prevStr = str
                 str = reader.readLine()
             }
-            obzat = Regex("""~~([\w\W]*?)~~""").replace(
-                Regex("""\*([\w\W]*?)\*""").replace(
-                    Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                        obzat
-                    ) { "<b>" + it.value.replace("**", "") + "</b>" }
-                ) { "<i>" + it.value.replace("*", "") + "</i>" }
-            ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-            it.write("<p>$obzat</p>")
+            val chObzat = buildString {
+                for (i in obzat) {
+                    if ((i == '*' || i == '~') && (i in timed || timed == "")) {
+                        timed += i
+                    } else {
+                        if (i !in timed && (i == '*' || i == '~')) {
+                            ok = true
+                        }
+                        when (timed) {
+                            "" -> none()
+                            "***" -> {
+                                if ("<b>" in stek && "<i>" in stek) {
+                                    append("</" + stek.last().substring(1))
+                                    stek.removeLast()
+                                    append("</" + stek.last().substring(1))
+                                    stek.removeLast()
+                                } else {
+                                    append("<b><i>")
+                                    stek.add("<b>")
+                                    stek.add("<i>")
+                                }
+                                timed = ""
+                            }
+
+                            "**" -> {
+                                if ("<b>" in stek && stek.last() == "<b>") {
+                                    append("</b>")
+                                    stek.removeLast()
+                                } else {
+                                    append("<b>")
+                                    stek.add("<b>")
+                                }
+                                timed = ""
+                            }
+
+                            "*" -> {
+                                if ("<i>" in stek && stek.last() == "<i>") {
+                                    append("</i>")
+                                    stek.removeLast()
+                                } else {
+                                    append("<i>")
+                                    stek.add("<i>")
+                                }
+                                timed = ""
+                            }
+
+                            "~~" -> {
+                                if ("<s>" in stek && stek.last() == "<s>") {
+                                    append("</s>")
+                                    stek.removeLast()
+                                } else {
+                                    append("<s>")
+                                    stek.add("<s>")
+                                }
+                                timed = ""
+                            }
+                        }
+                        if (ok) {
+                            timed = i.toString()
+                            ok = false
+                        } else {
+                            append(i)
+                        }
+
+                    }
+
+
+                }
+            }
+            it.write("<p>$chObzat</p>")
+
         } else it.write("<p></p>")
         it.write("</body></html>")
     }
