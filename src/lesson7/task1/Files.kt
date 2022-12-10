@@ -338,32 +338,38 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val reader = File(inputName).bufferedReader()
     var prevStr = reader.readLine()
     var str = reader.readLine()
+    var f = true
+    if (prevStr == null) {
+        f = false
+    }
     var obzat = prevStr
     File(outputName).bufferedWriter().use {
         it.write("<html><body>")
-        while (str != null) {
-            if (str.isEmpty() && prevStr.isNotEmpty()) {
-                obzat = Regex("""~~([\w\W]*?)~~""").replace(
-                    Regex("""\*([\w\W]*?)\*""").replace(
-                        Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                            obzat
-                        ) { "<b>" + it.value.replace("**", "") + "</b>" }
-                    ) { "<i>" + it.value.replace("*", "") + "</i>" }
-                ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-                it.write("<p>$obzat</p>")
-                obzat = ""
-            } else obzat += "$str"
-            prevStr = str
-            str = reader.readLine()
-        }
-        obzat = Regex("""~~([\w\W]*?)~~""").replace(
-            Regex("""\*([\w\W]*?)\*""").replace(
-                Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                    obzat
-                ) { "<b>" + it.value.replace("**", "") + "</b>" }
-            ) { "<i>" + it.value.replace("*", "") + "</i>" }
-        ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-        it.write("<p>$obzat</p>")
+        if (f) {
+            while (str != null) {
+                if (str.isEmpty() && prevStr.isNotEmpty()) {
+                    obzat = Regex("""~~([\w\W]*?)~~""").replace(
+                        Regex("""\*([\w\W]*?)\*""").replace(
+                            Regex("""\*\*([\w\W]*?)\*\*""").replace(
+                                obzat
+                            ) { "<b>" + it.value.replace("**", "") + "</b>" }
+                        ) { "<i>" + it.value.replace("*", "") + "</i>" }
+                    ) { "<s>" + it.value.replace("~~", "") + "</s>" }
+                    it.write("<p>$obzat</p>")
+                    obzat = ""
+                } else obzat += str
+                prevStr = str
+                str = reader.readLine()
+            }
+            obzat = Regex("""~~([\w\W]*?)~~""").replace(
+                Regex("""\*([\w\W]*?)\*""").replace(
+                    Regex("""\*\*([\w\W]*?)\*\*""").replace(
+                        obzat
+                    ) { "<b>" + it.value.replace("**", "") + "</b>" }
+                ) { "<i>" + it.value.replace("*", "") + "</i>" }
+            ) { "<s>" + it.value.replace("~~", "") + "</s>" }
+            it.write("<p>$obzat</p>")
+        } else it.write("<p></p>")
         it.write("</body></html>")
     }
 

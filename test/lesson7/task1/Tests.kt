@@ -261,6 +261,7 @@ Basic, Ruby, Swift.
     @Tag("22")
     fun markdownToHtmlSimple() {
         markdownToHtmlSimple("input/markdown_simple.md", "temp.html")
+        markdownToHtmlSimple("input/emptyFile.md", "input/temp.html")
         checkHtmlSimpleExample()
     }
 
