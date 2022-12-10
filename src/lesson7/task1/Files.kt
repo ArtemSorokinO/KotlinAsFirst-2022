@@ -342,20 +342,19 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             ) { "<b>" + it.value.replace("**", "") + "</b>" }
         ) { "<i>" + it.value.replace("*", "") + "</i>" }
     ) { "<s>" + it.value.replace("~~", "") + "</s>" }
-    val reader = file.split("\n").toMutableList()
-    var prevStr = reader[0]
-
+    val stroki = file.split("\n").toMutableList()
+    var prevStr = stroki[0]
     var f = true
-    if (reader.size== 1) {
+    if (stroki.size == 1) {
         f = false
     }
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
         if (f) {
-            while (reader.last() == "") reader.removeLast()
-            while (reader.first() == "") reader.removeFirst()
-            for (str in reader) {
-                if ((str == "\r" || str == "\n" || str.isEmpty()) && (prevStr != "\r" && prevStr != "\n" && prevStr.isNotEmpty()) && prevStr != "</p><p>") it.write("</p><p>")
+            while (stroki.last() == "") stroki.removeLast()
+            while (stroki.first() == "") stroki.removeFirst()
+            for (str in stroki) {
+                if ((str == "\r" || str == "\n" || str.isBlank()) && (prevStr != "\r" && prevStr != "\n" && prevStr.isNotBlank()) && prevStr != "</p><p>") it.write("</p><p>")
                 else it.write(str)
                 prevStr = str
             }
