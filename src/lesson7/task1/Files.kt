@@ -352,7 +352,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
         if (f) for (str in file.split("\n")) {
-            if (str == "\r" && prevStr != "\r" && prevStr != "</p><p>") it.write("</p><p>")
+            if ((str == "\r" || str == "\n") && (prevStr != "\r" && prevStr != "\n") && prevStr != "</p><p>") it.write("</p><p>")
             else it.write(str)
             prevStr = str
         }
