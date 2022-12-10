@@ -335,6 +335,14 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
+    val file = Regex("""~~([\w\W]*?)~~""").replace(
+        Regex("""\*([\w\W]*?)\*""").replace(
+            Regex("""\*\*([\w\W]*?)\*\*""").replace(
+                File(inputName).readText()
+            ) { "<b>" + it.value.replace("**", "") + "</b>" }
+        ) { "<i>" + it.value.replace("*", "") + "</i>" }
+    ) { "<s>" + it.value.replace("~~", "") + "</s>" }
+    File(inputName).writeText(file)
     val reader = File(inputName).bufferedReader()
     var prevStr = reader.readLine()
     var str = reader.readLine()
@@ -348,26 +356,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         if (f) {
             while (str != null) {
                 if (str.isEmpty() && prevStr.isNotEmpty()) {
-                    obzat = Regex("""~~([\w\W]*?)~~""").replace(
-                        Regex("""\*([\w\W]*?)\*""").replace(
-                            Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                                obzat
-                            ) { "<b>" + it.value.replace("**", "") + "</b>" }
-                        ) { "<i>" + it.value.replace("*", "") + "</i>" }
-                    ) { "<s>" + it.value.replace("~~", "") + "</s>" }
                     it.write("<p>$obzat</p>")
                     obzat = ""
-                } else obzat += str.replace("\r", "").replace("\t", "").replace(" ", "")
+                } else obzat += str.replace("\r", "").replace("\t", "")
                 prevStr = str
                 str = reader.readLine()
             }
-            obzat = Regex("""~~([\w\W]*?)~~""").replace(
-                Regex("""\*([\w\W]*?)\*""").replace(
-                    Regex("""\*\*([\w\W]*?)\*\*""").replace(
-                        obzat
-                    ) { "<b>" + it.value.replace("**", "") + "</b>" }
-                ) { "<i>" + it.value.replace("*", "") + "</i>" }
-            ) { "<s>" + it.value.replace("~~", "") + "</s>" }
             it.write("<p>$obzat</p>")
         } else it.write("<p></p>")
         it.write("</body></html>")
