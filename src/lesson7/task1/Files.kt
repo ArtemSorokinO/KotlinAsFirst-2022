@@ -347,7 +347,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         it.write("<html><body>")
         if (f) {
             while (str != null) {
-                if ((str.isEmpty() || str.isBlank()) && prevStr.isNotEmpty()) {
+                if ((str.isEmpty() || str.isBlank()) && (prevStr.isNotEmpty() || prevStr.isNotBlank())) {
                     obzat = Regex("""~~([\w\W]*?)~~""").replace(
                         Regex("""\*([\w\W]*?)\*""").replace(
                             Regex("""\*\*([\w\W]*?)\*\*""").replace(
