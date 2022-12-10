@@ -351,14 +351,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
         if (f) {
-            while (stroki.last() == "") stroki.removeLast()
-            while (stroki.first() == "") stroki.removeFirst()
+            while (stroki.last().isBlank()) stroki.removeLast()
+            while (stroki.first().isBlank()) stroki.removeFirst()
             for (str in stroki) {
-                if ((str == "\r" || str == "\n" || str.isBlank()) && (prevStr != "\r" && prevStr != "\n" && prevStr.isNotBlank()) && prevStr != "</p><p>") it.write("</p><p>")
+                if (str.isBlank() && prevStr.isNotBlank() && prevStr != "</p><p>") it.write("</p><p>")
                 else it.write(str)
                 prevStr = str
             }
-        } else it.write("$prevStr")
+        } else it.write(prevStr)
         it.write("</p></body></html>")
     }
 
