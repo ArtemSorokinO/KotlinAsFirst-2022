@@ -356,9 +356,13 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             prevStr = str
             str = reader.readLine()
         }
-        obzat = Regex("""\*\*([\w\W]*?)\*\*""").replace(obzat) { "<b>" + it.value.replace("**", "") + "</b>" }
-        obzat = Regex("""\*([\w\W]*?)\*""").replace(obzat) { "<i>" + it.value.replace("*", "") + "</i>" }
-        obzat = Regex("""~~([\w\W]*?)~~""").replace(obzat) { "<s>" + it.value.replace("~~", "") + "</s>" }
+        obzat = Regex("""~~([\w\W]*?)~~""").replace(
+            Regex("""\*([\w\W]*?)\*""").replace(
+                Regex("""\*\*([\w\W]*?)\*\*""").replace(
+                    obzat
+                ) { "<b>" + it.value.replace("**", "") + "</b>" }
+            ) { "<i>" + it.value.replace("*", "") + "</i>" }
+        ) { "<s>" + it.value.replace("~~", "") + "</s>" }
         it.write("\n<p>$obzat</p>\n")
         it.write("</body>\n</html>")
     }
