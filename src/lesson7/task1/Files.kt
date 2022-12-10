@@ -349,24 +349,19 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     if (file.length == 1) {
         f = false
     }
-    var obzat = ""
     File(outputName).bufferedWriter().use {
-        it.write("<html><body>")
-        if (f) {
-            for(str in file.split("\n")) {
-                if (str == "\r" && prevStr != "\r") {
-                    it.write("<p>$obzat</p>")
-                    obzat = ""
-                } else obzat += str
-                prevStr = str
-            }
-            it.write("<p>$obzat</p>")
-
-        } else it.write("<p>$prevStr</p>")
-        it.write("</body></html>")
+        it.write("<html><body><p>")
+        if (f) for (str in file.split("\n")) {
+            if (str == "\r" && prevStr != "\r" && prevStr != "</p><p>") it.write("</p><p>")
+            else it.write(str)
+            prevStr = str
+        }
+        else it.write("<p>$prevStr</p>")
+        it.write("</p></body></html>")
     }
 
 }
+
 /**
  * Сложная (23 балла)
  *
