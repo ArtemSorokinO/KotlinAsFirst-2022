@@ -1,5 +1,8 @@
 package lesson11.task1
 
+import ru.spbstu.wheels.Integer
+import java.lang.StringBuilder
+
 /**
  * Класс "беззнаковое большое целое число".
  *
@@ -13,64 +16,216 @@ package lesson11.task1
  */
 class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
 
+    private var number = mutableListOf<Int>()
+
+    fun getNumber(): MutableList<Int> = number
+    private fun fromStr(s: String): MutableList<Int> {
+        var list = mutableListOf<Int>()
+        var s = s
+        while (s != "") {
+            list.add(s.substring(0, 1).toInt())
+            s = s.removeRange(0, 1)
+        }
+        return list
+    }
+    //"123" -> [1] [2] [3]
+
+    private fun fromInt(i: Int): MutableList<Int> {
+        val list = mutableListOf<Int>()
+        var i = i
+        if (i == 0) return mutableListOf(0)
+        while (i != 0) {
+            list.add((i % 10))
+            i /= 10
+        }
+        list.reverse()
+        return list
+    }
+    //123 -> [1] [2] [3]
+
+    private fun toStrBack(s: MutableList<Int>): String {
+        var st = ""
+        for (i in s.reversed()) st += "$i"
+        return st
+    }
+    // [3] [2] [1] -> "123"
+
     /**
      * Конструктор из строки
      */
     constructor(s: String) {
-        TODO()
+        number = fromStr(s)
     }
 
     /**
      * Конструктор из целого
      */
     constructor(i: Int) {
-        TODO()
+        number = fromInt(i)
     }
 
     /**
      * Сложение
      */
-    operator fun plus(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun plus(other: UnsignedBigInteger): UnsignedBigInteger {
+        val otherNumber = other.number.reversed()
+        val timedNumber = mutableListOf<Int>()
+        val number = number.reversed()
+        var k = 0
+
+        for (i in 0 until maxOf(otherNumber.size, number.size)) {
+            var t = otherNumber.getOrElse(i) { 0 } + number.getOrElse(i) { 0 } + k
+            if (t >= 10) {
+                t -= 10
+                timedNumber.add(t)
+                k = 1
+            } else {
+                timedNumber.add(t)
+                k = 0
+            }
+        }
+        while (timedNumber.last() == 0) timedNumber.removeLast()
+        return UnsignedBigInteger(toStrBack(timedNumber))
+    }
 
     /**
      * Вычитание (бросить ArithmeticException, если this < other)
      */
-    operator fun minus(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun minus(other: UnsignedBigInteger): UnsignedBigInteger {
+        if (this < other) throw ArithmeticException()
+        val otherNumber = other.number.reversed()
+        val number = number.reversed()
+        val timedNumber = mutableListOf<Int>()
+        var k = 0
+        var t = 0
+
+        for (i in 0..number.size - 1) {
+            if (number[i] - k < otherNumber.getOrElse(i) { 0 }) {
+                t = number[i] + 10 - otherNumber.getOrElse(i) { 0 } - k
+                k = 1
+            } else {
+                t = number[i] - otherNumber.getOrElse(i) { 0 } - k
+                k = 0
+            }
+            timedNumber.add(t)
+        }
+        while (timedNumber.last() == 0 && timedNumber.size != 1) timedNumber.removeLast()
+        return UnsignedBigInteger(toStrBack(timedNumber))
+    }
 
     /**
      * Умножение
      */
-    operator fun times(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun times(other: UnsignedBigInteger): UnsignedBigInteger {
+        val otherNumber = other.number.reversed()
+        val timedNumber = mutableListOf<Int>()
+        val number = number.reversed()
+        var k = 0
+        var j = 0
+        var ost = 0
+        val ln = number.size + otherNumber.size
+        do {
+            for (i in 0..j) {
+                k += number.getOrElse(i) { 0 } * otherNumber.getOrElse(j - i) { 0 }
+            }
+            k += ost
+            ost = k / 10
+            timedNumber.add(k % 10)
+            k = 0
+            j++
+        } while (j < ln)
+        while (timedNumber.size > 1 && timedNumber.last() == 0) timedNumber.removeLast()
+        return UnsignedBigInteger(toStrBack(timedNumber))
+    }
 
     /**
      * Деление
      */
-    operator fun div(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun div(other: UnsignedBigInteger): UnsignedBigInteger {
+        val timedNumber = mutableListOf<Int>()
+        val thisNumber = number.toMutableList()
+        var litle = UnsignedBigInteger("")
+
+        while (thisNumber.isNotEmpty()) {
+            while (litle < other && thisNumber.isNotEmpty()) {
+                litle = UnsignedBigInteger((litle.toString() + thisNumber.first().toString()))
+                thisNumber.removeFirst()
+            }
+            var count = 0
+            while (litle > other || litle == other) {
+                count++
+                litle -= other
+            }
+            timedNumber.add(count)
+
+        }
+        while (timedNumber.size > 1 && timedNumber.last() == 0) timedNumber.removeLast()
+        return UnsignedBigInteger(toStrBack(timedNumber.reversed().toMutableList()))
+    }
 
     /**
      * Взятие остатка
      */
-    operator fun rem(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun rem(other: UnsignedBigInteger): UnsignedBigInteger = this - ((this / other) * other)
 
     /**
      * Сравнение на равенство (по контракту Any.equals)
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean = when (other) {
+        is UnsignedBigInteger -> number == other.getNumber()
+        else -> false
+    }
 
     /**
      * Сравнение на больше/меньше (по контракту Comparable.compareTo)
      */
-    override fun compareTo(other: UnsignedBigInteger): Int = TODO()
+    override fun compareTo(other: UnsignedBigInteger): Int =
+        when {
+            this == other -> 0
+            number.size < other.number.size -> -1
+            number.size > other.number.size -> 1
+            else -> {
+                var bol = false
+                for (i in 0 until number.size) {
+                    if (number[i] != other.number[i]) {
+                        bol = number[i] > other.number[i]
+                        break
+                    }
+                }
+                if (bol) 1 else -1
+            }
+        }
+
 
     /**
      * Преобразование в строку
      */
-    override fun toString(): String = TODO()
+    override fun toString(): String = buildString { for (i in number) append("$i") }
+
 
     /**
      * Преобразование в целое
      * Если число не влезает в диапазон Int, бросить ArithmeticException
      */
-    fun toInt(): Int = TODO()
+    fun toInt(): Int {
+        var int = 0
+        // 2,147,483,647 - max int
+        if (this.getNumber().size > 10) throw ArithmeticException()
+        else if (this.getNumber().size == 10) {
+            if (number[0] > 2) throw ArithmeticException()
+            else if (number[1] > 1) throw ArithmeticException()
+            else if (number[2] > 4) throw ArithmeticException()
+            else if (number[3] > 7) throw ArithmeticException()
+            else if (number[4] > 4) throw ArithmeticException()
+            else if (number[5] > 8) throw ArithmeticException()
+            else if (number[6] > 3) throw ArithmeticException()
+            else if (number[7] > 6) throw ArithmeticException()
+            else if (number[8] > 4) throw ArithmeticException()
+            else if (number[9] > 7) throw ArithmeticException()
+        }
+        for (i in number) int = int * 10 + i
+        return int
+
+    }
 
 }
