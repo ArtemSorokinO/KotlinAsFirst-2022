@@ -18,7 +18,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
 
     private var number = mutableListOf<Int>()
 
-    fun getNumber(): MutableList<Int> = number
+    fun getNumber(): MutableList<Int> = number.toMutableList()
     private fun fromStr(s: String): MutableList<Int> {
         var list = mutableListOf<Int>()
         var s = s
@@ -43,11 +43,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     }
     //123 -> [1] [2] [3]
 
-    private fun toStrBack(s: MutableList<Int>): String {
-        var st = ""
-        for (i in s.reversed()) st += "$i"
-        return st
-    }
+    private fun toStrBack(s: MutableList<Int>): String = s.reversed().joinToString(separator = "")
     // [3] [2] [1] -> "123"
 
     /**
@@ -148,6 +144,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
 
         while (thisNumber.isNotEmpty()) {
             while (litle < other && thisNumber.isNotEmpty()) {
+                println(litle < other)
                 litle = UnsignedBigInteger((litle.toString() + thisNumber.first().toString()))
                 thisNumber.removeFirst()
             }
@@ -171,10 +168,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     /**
      * Сравнение на равенство (по контракту Any.equals)
      */
-    override fun equals(other: Any?): Boolean = when (other) {
-        is UnsignedBigInteger -> number == other.getNumber()
-        else -> false
-    }
+    override fun equals(other: Any?): Boolean = if (other is UnsignedBigInteger) number == other.getNumber() else false
 
     /**
      * Сравнение на больше/меньше (по контракту Comparable.compareTo)
@@ -208,24 +202,13 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Если число не влезает в диапазон Int, бросить ArithmeticException
      */
     fun toInt(): Int {
-        var int = 0
         // 2,147,483,647 - max int
-        if (this.getNumber().size > 10) throw ArithmeticException()
-        else if (this.getNumber().size == 10) {
-            if (number[0] > 2) throw ArithmeticException()
-            else if (number[1] > 1) throw ArithmeticException()
-            else if (number[2] > 4) throw ArithmeticException()
-            else if (number[3] > 7) throw ArithmeticException()
-            else if (number[4] > 4) throw ArithmeticException()
-            else if (number[5] > 8) throw ArithmeticException()
-            else if (number[6] > 3) throw ArithmeticException()
-            else if (number[7] > 6) throw ArithmeticException()
-            else if (number[8] > 4) throw ArithmeticException()
-            else if (number[9] > 7) throw ArithmeticException()
-        }
-        for (i in number) int = int * 10 + i
-        return int
-
+        // 9,223,372,036,854,775,807 - max long, not so long
+        if (this.getNumber().joinToString(separator = "").length > 18) throw ArithmeticException()
+        else if (this.getNumber().joinToString(separator = "").toLong() > 2147483647) throw ArithmeticException()
+        //о нет, это жа запрещённый условием лонг, ужас
+        else return number.joinToString(separator = "").toInt()
     }
+
 
 }

@@ -68,11 +68,13 @@ internal class UnsignedBigIntegerTest {
     @Test
     @Tag("8")
     fun ubiCompareTo() {
+        assertTrue(UnsignedBigInteger("184467440737") > UnsignedBigInteger("494967296"))
         assertFalse(UnsignedBigInteger("1") > UnsignedBigInteger("1"))
         assertFalse(UnsignedBigInteger("1") < UnsignedBigInteger("1"))
         assertFalse(UnsignedBigInteger("19") < UnsignedBigInteger("14"))
         assertTrue(UnsignedBigInteger(123456789) < UnsignedBigInteger("9876543210"))
         assertTrue(UnsignedBigInteger("9876543210") > UnsignedBigInteger(123456789))
+        assertTrue(UnsignedBigInteger("99999999999999999999999999999999999999999999876543210") > UnsignedBigInteger(123456789))
         assertTrue(UnsignedBigInteger("9") > UnsignedBigInteger(1))
         assertTrue(UnsignedBigInteger("19") > UnsignedBigInteger(18))
         assertFalse(UnsignedBigInteger("1844674407") > UnsignedBigInteger("4294967296"))
@@ -82,5 +84,7 @@ internal class UnsignedBigIntegerTest {
     @Tag("8")
     fun ubiToInt() {
         assertEquals(123456789, UnsignedBigInteger("123456789").toInt())
+        assertThrows(ArithmeticException::class.java) { UnsignedBigInteger("99999999999999999").toInt() }
+        assertThrows(ArithmeticException::class.java) { UnsignedBigInteger("999999999999999999999999999999999999999999999999").toInt() }
     }
 }
