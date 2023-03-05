@@ -144,7 +144,6 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
 
         while (thisNumber.isNotEmpty()) {
             while (litle < other && thisNumber.isNotEmpty()) {
-                println(litle < other)
                 litle = UnsignedBigInteger((litle.toString() + thisNumber.first().toString()))
                 thisNumber.removeFirst()
             }
